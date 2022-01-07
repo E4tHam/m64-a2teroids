@@ -1,8 +1,6 @@
 
 #include "asteroids.h"
 
-#include <vram.h>
-#include <stop.h>
 
 #include <stdlib.h>
 
@@ -21,7 +19,7 @@ void asteroid_stack_iterate( void(*f)(asteroid_t * a) ) {
     }
 }
 
-void asteroid_stack_initialize( void ) {
+void asteroid_stack_initialize(void) {
     uint8_t i;
     asteroid_stack_size = 0;
     asteroid_stack_start = 0;
@@ -31,6 +29,14 @@ void asteroid_stack_initialize( void ) {
         asteroid_stack[i].velocity.y = 0;
         asteroid_stack[i].num_obmas = 0;
     }
+}
+
+void asteroid_stack_clear(void) {
+    uint8_t i;
+    asteroid_stack_iterate(asteroid_destroy);
+    asteroid_stack_size = 0;
+    asteroid_stack_start = 0;
+    asteroid_stack_end = 0;
 }
 
 // uint8_t asteroid_stack_pop( uint8_t * dst, uint8_t dst_size ) {

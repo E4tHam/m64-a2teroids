@@ -1,21 +1,12 @@
 
 #include "asteroid.h"
 
-#include <vram.h>
-#include <arcade_zero_page.h>
-#include <stop.h>
-
 #include "object_stack.h"
 #include "patterns.h"
-
 
 #include <stdlib.h>
 
 const uint8_t asteroid_pmfa = 0;
-
-void asteroid_load_pattern(void) {
-    load_foreground_pattern(white_pattern,asteroid_pmfa);
-}
 
 void asteroid_update( asteroid_t * a ) {
     uint8_t i;

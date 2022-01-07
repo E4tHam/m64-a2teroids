@@ -16,6 +16,7 @@ void asteroid_stack_iterate( void(*f)(asteroid_t * a) );
 extern uint8_t asteroid_stack_start, asteroid_stack_end, asteroid_stack_size;
 
 void asteroid_stack_initialize( void );
+void asteroid_stack_clear( void );
 
 // uint8_t asteroid_stack_pop( uint8_t * dst, uint8_t dst_size );
 

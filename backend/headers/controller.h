@@ -3,8 +3,8 @@
 
 #include "int.h"
 #ifndef SIM
-#warning "SIM not defined"
-#define SIM 0
+// #warning "SIM not defined"
+#define SIM 1
 #endif
 
 // Import controller values

@@ -20,5 +20,6 @@ extern const pattern_t seahorse_yellow_pattern;
 void load_background_pattern(const pattern_t pattern, const uint8_t pmba);
 void load_foreground_pattern(const pattern_t pattern, const uint8_t pmfa);
 
+void load_patterns(void);
 
 #endif

@@ -5,10 +5,10 @@
 
 #include <int.h>
 
-#include "velocity.h"
+#include "coordinate.h"
 
 typedef struct asteroid_s {
-    velocity8_t velocity;
+    coordinateS8_t velocity;
     uint8_t num_obmas;
     uint8_t obmas[16];
     uint8_t diameter;
