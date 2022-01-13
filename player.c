@@ -89,8 +89,6 @@ void player_delete(const uint8_t player_num) {
     obma_stack_push( player[player_num].obmas, player[player_num].num_obmas );
 }
 
-#include <arcade_zero_page.h>
-
 void players_draw(void) {
     uint8_t i;
     uint8_t p0_flip, p1_flip;

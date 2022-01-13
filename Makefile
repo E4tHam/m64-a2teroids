@@ -21,7 +21,7 @@ DUMP_DIR = dump
 
 .PHONY: all dump run verify clean
 
-MACHINE = arcade
+MACHINE = mapache64
 
 # Instruct that compilation and assembly should be done using cc65/ca65 and
 # specify some required flags (https://cc65.github.io/doc/customizing.html#toc9)
@@ -29,7 +29,7 @@ AS = ca65
 ASFLAGS = --cpu 65c02
 
 CC = cc65
-CFLAGS = --cpu 65c02 -t none
+CFLAGS = --cpu 65c02 -t none -Oi
 
 PYTHON = python3
 
@@ -86,15 +86,13 @@ verify: ${DUMP_DIR}/firmware.bin
 	@diff .firmware_hd_temp/vanilla.hex .firmware_hd_temp/curr.hex && echo "SUCCESS: Firmware matches"
 	@rm -rf .firmware_hd_temp
 
-
 # Run the simulator
 run ${RUN_FILES}: ${OUTPUT} ${DUMP_DIR}/vectors.bin
 	@mkdir -p ${DUMP_DIR}
 	@sh backend/run.sh ${OUTPUT} ${DUMP_DIR}/vectors.bin ${DUMP_DIR}
 
 
-# Hack together the three binaries output by ld65 into one unified memory map
-# understandable by the py65 simulator
+# Combine the three binaries output by ld65 into one unified memory map for py65
 ${OUTPUT}: ${MEMORY_DIR}/
 	@mkdir -p ${DUMP_DIR}
 	@dd if=/dev/zero of=$@ bs=1 count=0 seek=$(shell echo "ibase=16;5000"|bc) status=none
@@ -107,23 +105,23 @@ ${OUTPUT}: ${MEMORY_DIR}/
 	@echo "Created $@"
 
 # Build the three different binaries (ROM, FPGA ROM, IO area)
-${MEMORY_DIR}/: ${CXX_BIN} ${ASM_BIN} ${HEADERS}
+${MEMORY_DIR}/: ${CXX_BIN} ${ASM_BIN}
 	@rm -rf $@
 	@mkdir -p build/.temp_memory
 	ld65 -C backend/${MACHINE}.cfg -m ${BUILD_DIR}/build.map \
 	    ${ASM_BIN} \
 	    ${CXX_BIN} \
 	    ${LIB_FILES} \
-	    backend/arcade.lib \
+	    backend/${MACHINE}.lib \
 	    -o build/.temp_memory/${MACHINE}
 	mv build/.temp_memory $@
 
 
 # Override the default/implicit *.c compilation rule to use the cc65/ca65 syntax
-${BUILD_DIR}/%.c.o: %.c
+${BUILD_DIR}/%.c.o: %.c ${HEADERS}
 	@mkdir -p $(dir $@)
-	$(CC) -I backend/headers $(CFLAGS) $< -o ${BUILD_DIR}/$(^:.c=.c.s)
-	$(AS) $(ASFLAGS) ${BUILD_DIR}/$(^:.c=.c.s) -o $@
+	$(CC) -I backend/headers $(CFLAGS) $< -o ${BUILD_DIR}/$(<:.c=.c.s)
+	$(AS) $(ASFLAGS) ${BUILD_DIR}/$(<:.c=.c.s) -o $@
 
 # Override the default/implicit *.s assembly rule to use the ca65 syntax
 ${BUILD_DIR}/%.s.o: %.s ${RESOURCES}

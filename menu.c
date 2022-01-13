@@ -6,7 +6,7 @@
 #include "game_state.h"
 
 #include <vram.h>
-#include <arcade_zero_page.h>
+#include <mapache64_zero_page.h>
 
 #include <stop.h>
 

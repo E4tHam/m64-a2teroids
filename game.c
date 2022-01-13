@@ -8,7 +8,7 @@
 #include "menu.h"
 
 #include <stdlib.h>
-#include <arcade_zero_page.h>
+#include <mapache64_zero_page.h>
 
 
 bool player0_collision, player1_collision;
