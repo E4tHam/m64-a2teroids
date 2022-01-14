@@ -2,8 +2,8 @@
 #include "game.h"
 
 #include "player.h"
-#include "asteroids.h"
-#include "controllers.h"
+#include "asteroid_stack.h"
+#include "controller_edge.h"
 #include "game_state.h"
 #include "menu.h"
 
@@ -38,11 +38,13 @@ bool get_player_player_collision( void ) {
         ( OBM[player[0].obmas[0]].y + 11 >= OBM[player[1].obmas[0]].y );
 }
 
+// frame that the game started on
 uint32_t start_frame;
 
 bool in_grace_period(void) {
     return ((FRAME - start_frame) < 48);
 }
+
 
 void game_initialize( void ) {
     uint8_t i, j;
@@ -68,16 +70,14 @@ void game_initialize( void ) {
 
 
 void game_advance(void) {
-    uint8_t i;
-
     // if collision occurred
     if (player0_collision || player1_collision) {
         // if start was pressed, open menu
         if ((CONTROLLER_1_NEDGE | CONTROLLER_2_NEDGE) & CONTROLLER_START_MASK ) {
             initialized = false;
             game_state = GAME_STATE_MENU;
-            if (!player0_collision) p0_score_increment();
-            if (!player1_collision) p1_score_increment();
+            if (!player0_collision) player_score_increment(0);
+            if (!player1_collision) player_score_increment(1);
         } else {
             return;
         }
@@ -90,12 +90,20 @@ void game_advance(void) {
     player[1].position.y += player[1].velocity.y;
     players_draw();
 
-    // move asteroids
+    // move asteroid_stack
     asteroid_stack_iterate(asteroid_update);
 
     // check if collision between player and asteroid
-    if ( !in_grace_period() )
-        asteroid_stack_iterate(update_player_asteroid_collision);
+    // (using unoptimized code to regulate framerate)
+    // // optimized:
+    // if ( !in_grace_period() )
+    //     asteroid_stack_iterate(update_player_asteroid_collision);
+    // // unoptimized:
+    asteroid_stack_iterate(update_player_asteroid_collision);
+    if ( in_grace_period() ) {
+        player0_collision = 0;
+        player1_collision = 0;
+    }
 
     // check and handle player player collision
     if (get_player_player_collision()) {
@@ -104,22 +112,22 @@ void game_advance(void) {
     }
 
     // accelerate players
-    if      (CONTROLLER_1&CONTROLLER_LEFT_MASK)         player[0].velocity.x -= 1;
-    else if (CONTROLLER_1&CONTROLLER_RIGHT_MASK)        player[0].velocity.x += 1;
-    else if (player[0].velocity.x != 0 && (FRAME&1))    player[0].velocity.x += (player[0].velocity.x<0) ? 1 : -1;
-    if      (CONTROLLER_1&CONTROLLER_UP_MASK)           player[0].velocity.y -= 1;
-    else if (CONTROLLER_1&CONTROLLER_DOWN_MASK)         player[0].velocity.y += 1;
-    else if (player[0].velocity.y != 0 && (FRAME&1))    player[0].velocity.y += (player[0].velocity.y<0) ? 1 : -1;
-    if      (CONTROLLER_2&CONTROLLER_LEFT_MASK)         player[1].velocity.x -= 1;
-    else if (CONTROLLER_2&CONTROLLER_RIGHT_MASK)        player[1].velocity.x += 1;
-    else if (player[1].velocity.x != 0 && (FRAME&1))    player[1].velocity.x += (player[1].velocity.x<0) ? 1 : -1;
-    if      (CONTROLLER_2&CONTROLLER_UP_MASK)           player[1].velocity.y -= 1;
-    else if (CONTROLLER_2&CONTROLLER_DOWN_MASK)         player[1].velocity.y += 1;
-    else if (player[1].velocity.y != 0 && (FRAME&1))    player[1].velocity.y += (player[1].velocity.y<0) ? 1 : -1;
+    if      (CONTROLLER_1&CONTROLLER_LEFT_MASK)         player[0].velocity.x -= PLAYER_ACCEL;
+    else if (CONTROLLER_1&CONTROLLER_RIGHT_MASK)        player[0].velocity.x += PLAYER_ACCEL;
+    else if (player[0].velocity.x != 0 && (FRAME&1))    player[0].velocity.x += (player[0].velocity.x<0) ? PLAYER_ACCEL : -PLAYER_ACCEL;
+    if      (CONTROLLER_1&CONTROLLER_UP_MASK)           player[0].velocity.y -= PLAYER_ACCEL;
+    else if (CONTROLLER_1&CONTROLLER_DOWN_MASK)         player[0].velocity.y += PLAYER_ACCEL;
+    else if (player[0].velocity.y != 0 && (FRAME&1))    player[0].velocity.y += (player[0].velocity.y<0) ? PLAYER_ACCEL : -PLAYER_ACCEL;
+    if      (CONTROLLER_2&CONTROLLER_LEFT_MASK)         player[1].velocity.x -= PLAYER_ACCEL;
+    else if (CONTROLLER_2&CONTROLLER_RIGHT_MASK)        player[1].velocity.x += PLAYER_ACCEL;
+    else if (player[1].velocity.x != 0 && (FRAME&1))    player[1].velocity.x += (player[1].velocity.x<0) ? PLAYER_ACCEL : -PLAYER_ACCEL;
+    if      (CONTROLLER_2&CONTROLLER_UP_MASK)           player[1].velocity.y -= PLAYER_ACCEL;
+    else if (CONTROLLER_2&CONTROLLER_DOWN_MASK)         player[1].velocity.y += PLAYER_ACCEL;
+    else if (player[1].velocity.y != 0 && (FRAME&1))    player[1].velocity.y += (player[1].velocity.y<0) ? PLAYER_ACCEL : -PLAYER_ACCEL;
 
     // clamp velocities
-    player[0].velocity.x = Q9_6_clamp(-6,player[0].velocity.x,6);
-    player[0].velocity.y = Q9_6_clamp(-6,player[0].velocity.y,6);
-    player[1].velocity.x = Q9_6_clamp(-6,player[1].velocity.x,6);
-    player[1].velocity.y = Q9_6_clamp(-6,player[1].velocity.y,6);
+    player[0].velocity.x = Q9_6_clamp(-PLAYER_MAX_SPEED,player[0].velocity.x,PLAYER_MAX_SPEED);
+    player[0].velocity.y = Q9_6_clamp(-PLAYER_MAX_SPEED,player[0].velocity.y,PLAYER_MAX_SPEED);
+    player[1].velocity.x = Q9_6_clamp(-PLAYER_MAX_SPEED,player[1].velocity.x,PLAYER_MAX_SPEED);
+    player[1].velocity.y = Q9_6_clamp(-PLAYER_MAX_SPEED,player[1].velocity.y,PLAYER_MAX_SPEED);
 }

@@ -18,7 +18,7 @@ void asteroid_load_pattern(void) {
     load_foreground_pattern(white_pattern,asteroid_pmfa);
 }
 
-void player_load_pattern( void ) {
+void player_load_patterns( void ) {
     load_foreground_pattern( chicken_red_pattern, chicken_red_pmfa );
     load_foreground_pattern( chicken_white_pattern, chicken_white_pmfa );
     load_foreground_pattern( chicken_yellow_pattern, chicken_yellow_pmfa );
@@ -31,5 +31,5 @@ void player_load_pattern( void ) {
 
 void load_patterns(void) {
     asteroid_load_pattern();
-    player_load_pattern();
+    player_load_patterns();
 }

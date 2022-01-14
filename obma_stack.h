@@ -1,6 +1,6 @@
 
-#ifndef __OBJECT_STACK_H
-#define __OBJECT_STACK_H
+#ifndef __OBMA_STACK_H
+#define __OBMA_STACK_H
 
 
 #include <int.h>

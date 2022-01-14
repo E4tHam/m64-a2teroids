@@ -1,9 +1,9 @@
 
 # Define a list of all C and Assemnbly source files
-CXX_SRC = main.c asteroid.c asteroids.c controllers.c game_state.c game.c menu.c object_stack.c patterns.c player.c
+CXX_SRC = main.c asteroid.c asteroid_stack.c controller_edge.c game_state.c game.c menu.c obma_stack.c patterns.c player.c
 ASM_SRC = patterns.s
 
-HEADERS = main.h asteroid.h asteroids.h controllers.h game_state.h game.h menu.h object_stack.h patterns.h player.h coordinate.h
+HEADERS = main.h asteroid.h asteroid_stack.h controller_edge.h game_state.h game.h menu.h obma_stack.h patterns.h player.h coordinate.h
 
 # List of PNG images used for patterns
 IMAGES = $(shell find patterns -name "*.png")

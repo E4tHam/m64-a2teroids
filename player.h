@@ -7,7 +7,8 @@
 
 #include "coordinate.h"
 
-#define PLAYER_SPEED    1
+#define PLAYER_ACCEL        1
+#define PLAYER_MAX_SPEED    6
 
 #define PLAYER_SELECT_CHICKEN   0
 #define PLAYER_SELECT_SEAHORSE  1
@@ -18,12 +19,12 @@ typedef struct player_s {
     coordinateU8_t position;
     uint8_t num_obmas;
     uint8_t obmas[16];
+    uint8_t fighter;
+    uint8_t score_l, score_u;
 } player_t;
 
+// players
 extern player_t player[2];
-
-extern uint8_t player_1_fighter;
-extern uint8_t player_2_fighter;
 
 extern const uint8_t chicken_red_pmfa;
 extern const uint8_t chicken_white_pmfa;
@@ -34,19 +35,22 @@ extern const uint8_t mouse_white_pmfa;
 extern const uint8_t seahorse_magenta_pmfa;
 extern const uint8_t seahorse_yellow_pmfa;
 
-void player_load_pattern(void);
+// load player patterns
+void player_load_patterns(void);
 
-void player_initialize(const uint8_t select, const uint8_t player_num);
+// initialize players
+void player_initialize(void);
 
+// reserve player objects
+void player_create(const uint8_t player_num, const uint8_t select);
+// give up player objects
 void player_delete(const uint8_t player_num);
 
+// copy players to vram
 void players_draw(void);
 
-extern uint8_t p0_score_u, p0_score_l, p1_score_u, p1_score_l;
-
-void p0_score_increment(void);
-void p1_score_increment(void);
-void player_scores_reset(void);
+// increment score of player
+void player_score_increment(const uint8_t player_num);
 
 
 #endif

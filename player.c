@@ -4,18 +4,11 @@
 #include <stop.h>
 
 #include "patterns.h"
-#include "object_stack.h"
+#include "obma_stack.h"
 #include "game_state.h"
 #include "game.h"
 
-#define PLAYER_SELECT_CHICKEN   0
-#define PLAYER_SELECT_SEAHORSE  1
-#define PLAYER_SELECT_MOUSE     2
-
 player_t player[2];
-
-uint8_t player_1_fighter;
-uint8_t player_2_fighter;
 
 const uint8_t chicken_red_pmfa = 1;
 const uint8_t chicken_white_pmfa = 2;
@@ -26,7 +19,25 @@ const uint8_t mouse_white_pmfa = 6;
 const uint8_t seahorse_magenta_pmfa = 7;
 const uint8_t seahorse_yellow_pmfa = 8;
 
-void player_initialize( const uint8_t select, const uint8_t player_num ) {
+void player_initialize(void) {
+    uint8_t i;
+    for (i=0; i < 2; i++) {
+        player[i].fighter = i;
+        player[i].velocity.x = 0;
+        player[i].velocity.y = 0;
+        player[i].position.x = ( 64 + (i ? 128 : 0) );
+        player[i].position.y = ( 124 );
+        player[i].num_obmas = 0;
+        player[i].score_l = 0;
+        player[i].score_u = 0;
+        player_create(i, player[i].fighter);
+    }
+}
+
+void player_create(const uint8_t player_num, const uint8_t select) {
+
+    // start fresh
+    player_delete(player_num);
 
     switch (select) {
     case PLAYER_SELECT_CHICKEN:
@@ -44,11 +55,6 @@ void player_initialize( const uint8_t select, const uint8_t player_num ) {
     }
 
     obma_stack_pop( player[player_num].obmas, player[player_num].num_obmas );
-
-    player[player_num].velocity.x = 0;
-    player[player_num].velocity.y = 0;
-    player[player_num].position.x = ( 64 + (player_num ? 128 : 0) );
-    player[player_num].position.y = ( 124 );
 
     switch (select) {
     case PLAYER_SELECT_CHICKEN:
@@ -84,8 +90,6 @@ void player_delete(const uint8_t player_num) {
         OBM[player[player_num].obmas[i]].y = 0xff;
     }
     player[player_num].num_obmas = 0;
-    player[player_num].velocity.x = 0;
-    player[player_num].velocity.y = 0;
     obma_stack_push( player[player_num].obmas, player[player_num].num_obmas );
 }
 
@@ -115,30 +119,11 @@ void players_draw(void) {
     }
 }
 
-
-uint8_t p0_score_u, p0_score_l, p1_score_u, p1_score_l;
-
-void p0_score_increment(void) {
-    if (p0_score_l==9) {
-        p0_score_l = 0;
-        p0_score_u = (p0_score_u==9) ? 0 : p0_score_u+1;
+void player_score_increment(const uint8_t player_num) {
+    if (player[player_num].score_l==9) {
+        player[player_num].score_l = 0;
+        player[player_num].score_u = (player[player_num].score_u==9) ? 0 : player[player_num].score_u+1;
     } else {
-        p0_score_l++;
+        player[player_num].score_l++;
     }
-}
-
-void p1_score_increment(void) {
-    if (p1_score_l==9) {
-        p1_score_l = 0;
-        p1_score_u = (p1_score_u==9) ? 0 : p1_score_u+1;
-    } else {
-        p1_score_l++;
-    }
-}
-
-void player_scores_reset(void) {
-    p0_score_u = 0;
-    p0_score_l = 0;
-    p1_score_u = 0;
-    p1_score_l = 0;
 }

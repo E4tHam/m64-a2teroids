@@ -1,7 +1,7 @@
 
 #include "asteroid.h"
 
-#include "object_stack.h"
+#include "obma_stack.h"
 #include "patterns.h"
 
 #include <stdlib.h>
@@ -14,7 +14,6 @@ void asteroid_update( asteroid_t * a ) {
         OBM[a->obmas[i]].x += a->velocity.x;
         OBM[a->obmas[i]].y += a->velocity.y;
     }
-    // to do: call destroy once a wall is hit
 }
 
 uint8_t asteroid_create(

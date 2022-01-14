@@ -1,5 +1,5 @@
 
-#include "object_stack.h"
+#include "obma_stack.h"
 
 #include <vram.h>
 

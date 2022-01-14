@@ -1,5 +1,5 @@
 
-#include "asteroids.h"
+#include "asteroid_stack.h"
 
 
 #include <stdlib.h>
@@ -39,20 +39,7 @@ void asteroid_stack_clear(void) {
     asteroid_stack_end = 0;
 }
 
-// uint8_t asteroid_stack_pop( uint8_t * dst, uint8_t dst_size ) {
-//     uint8_t i;
-//     if (asteroid_stack_size < dst_size) return 0;
-//     asteroid_stack_size -= dst_size;
-//     for (i = 0; i < dst_size; i++) {
-//         dst[i] = asteroid_stack[asteroid_stack_start];
-//         asteroid_stack_start++;
-//         if (asteroid_stack_start == ASTEROID_STACK_SIZE)
-//             asteroid_stack_start = 0;
-//     }
-//     return dst_size;
-// }
-
-uint8_t asteroid_stack_push( uint8_t diameter ) {
+bool asteroid_stack_push( uint8_t diameter ) {
 
     union bytes_of_an_int_u {
         sint16_t int16;

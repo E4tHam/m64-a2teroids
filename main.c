@@ -19,28 +19,25 @@
 
 
 #include "main.h"
-
-#include "controllers.h"
 #include "game_state.h"
-#include "object_stack.h"
-#include "patterns.h"
 
+#include "controller_edge.h"
+#include "obma_stack.h"
+#include "patterns.h"
 #include "player.h"
 #include "menu.h"
 
 
 void reset(void) {
-    controllers_reset();
+    controller_edge_reset();
 
     initialized = false;
     game_state = GAME_STATE_MENU;
 
     // load patterns
     obma_stack_initialize();
-
-    player_1_fighter = PLAYER_SELECT_CHICKEN;
-    player_2_fighter = PLAYER_SELECT_MOUSE;
-    player_scores_reset();
+    //
+    player_initialize();
 
     load_patterns();
 }
@@ -48,7 +45,7 @@ void reset(void) {
 void do_logic(void) {
     if (!initialized)
         initialize();
-    controllers_update();
+    controller_edge_update();
     advance();
 }
 
