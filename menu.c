@@ -62,7 +62,7 @@ void menu_initialize(void) {
     TXBL[19][24] += player[1].score_u;
     TXBL[19][25] += player[1].score_l;
 
-    player_initialize();
+    players_initialize();
 }
 
 void menu_handle_start(void) {
@@ -88,12 +88,12 @@ void menu_advance(void) {
         if ((i?CONTROLLER_2_PEDGE:CONTROLLER_1_PEDGE)&CONTROLLER_UP_MASK) {
             do player[i].fighter = get_next_fighter_num(player[i].fighter);
             while (player[i].fighter == player[!i].fighter);
-            player_create(i,player[i].fighter);
+            player_fighter_set(i,player[i].fighter);
         }
         if ((i?CONTROLLER_2_PEDGE:CONTROLLER_1_PEDGE)&CONTROLLER_DOWN_MASK) {
             do player[i].fighter = get_prev_fighter_num(player[i].fighter);
             while (player[i].fighter == player[!i].fighter);
-            player_create(i,player[i].fighter);
+            player_fighter_set(i,player[i].fighter);
         }
     }
 

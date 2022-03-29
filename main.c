@@ -36,8 +36,8 @@ void reset(void) {
 
     // load patterns
     obma_stack_initialize();
-    //
-    player_initialize();
+
+    players_initialize();
 
     load_patterns();
 }

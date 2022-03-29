@@ -19,25 +19,32 @@ const uint8_t mouse_white_pmfa = 6;
 const uint8_t seahorse_magenta_pmfa = 7;
 const uint8_t seahorse_yellow_pmfa = 8;
 
-void player_initialize(void) {
+bool players_initialized = 0;
+
+void players_initialize(void) {
     uint8_t i;
     for (i=0; i < 2; i++) {
-        player[i].fighter = i;
+        // only first time initialize
+        if (!players_initialized) {
+            player[i].fighter = i;
+            player[i].num_obmas = 0;
+            player_fighter_set(i, player[i].fighter);
+            player[i].score_l = 0;
+            player[i].score_u = 0;
+        }
+        // reset position
         player[i].velocity.x = 0;
         player[i].velocity.y = 0;
         player[i].position.x = ( 64 + (i ? 128 : 0) );
         player[i].position.y = ( 124 );
-        player[i].num_obmas = 0;
-        player[i].score_l = 0;
-        player[i].score_u = 0;
-        player_create(i, player[i].fighter);
     }
+    players_initialized = true;
 }
 
-void player_create(const uint8_t player_num, const uint8_t select) {
+void player_fighter_set(const uint8_t player_num, const uint8_t select) {
 
     // start fresh
-    player_delete(player_num);
+    player_fighter_remove(player_num);
 
     switch (select) {
     case PLAYER_SELECT_CHICKEN:
@@ -84,7 +91,7 @@ void player_create(const uint8_t player_num, const uint8_t select) {
     }
 }
 
-void player_delete(const uint8_t player_num) {
+void player_fighter_remove(const uint8_t player_num) {
     uint8_t i;
     for (i = 0; i < player[player_num].num_obmas; i++) {
         OBM[player[player_num].obmas[i]].y = 0xff;

@@ -39,12 +39,12 @@ extern const uint8_t seahorse_yellow_pmfa;
 void player_load_patterns(void);
 
 // initialize players
-void player_initialize(void);
+void players_initialize(void);
 
 // reserve player objects
-void player_create(const uint8_t player_num, const uint8_t select);
+void player_fighter_set(const uint8_t player_num, const uint8_t select);
 // give up player objects
-void player_delete(const uint8_t player_num);
+void player_fighter_remove(const uint8_t player_num);
 
 // copy players to vram
 void players_draw(void);
